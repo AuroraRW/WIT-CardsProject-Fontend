@@ -1,6 +1,6 @@
 // const loginEle = document.getElementsByTagName('label')
 // const loginEle = document.querySelectorAll('label')
-import {auth, signInWithEmailAndPassword} from './firebase.js'
+import {auth, signInWithEmailAndPassword, db, ref, get, child} from './firebase.js'
 $(document).ready(()=>{
     $('button').on('click', (e)=>{
         e.preventDefault()
@@ -28,12 +28,21 @@ $(document).ready(()=>{
             signInWithEmailAndPassword(auth, email, password)
             .then((userCredential)=>{
                 console.log(userCredential.user)
+                const userKey = userCredential.user.uid
+                const dbRef = ref(db)
+                get(child(dbRef, `Users/${userKey}`)).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        console.log(snapshot.val());
+                        let name = snapshot.val().FirstName
+                        localStorage.setItem('name', name)
+                        window.location.href='cards.html'
 
-                // get uid from userCredential.user and save uid into localstorage
-                
-                // get all user infor from db save name into localstorage
-                
-                window.location.href='cards.html'
+                    } else {
+                      console.log("No data available");
+                    }
+                  }).catch((error) => {
+                    console.error(error);
+                  });
             })
             
         }

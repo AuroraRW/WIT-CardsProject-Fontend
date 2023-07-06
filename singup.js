@@ -1,4 +1,4 @@
-import {auth, createUserWithEmailAndPassword} from './firebase.js'
+import {auth, createUserWithEmailAndPassword, db, ref, set} from './firebase.js'
 $(document).ready(()=>{
     $('button').on('click', (e)=>{
         e.preventDefault()
@@ -49,9 +49,12 @@ $(document).ready(()=>{
             .then((userCredential)=>{
                 console.log(userCredential.user)
                 // save the user into database
-                window.location.href='index.html'
+                const userKey = userCredential.user.uid
+                set(ref(db, 'Users/' + userKey), userData)
+                .then(()=>{
+                    window.location.href='index.html'
+                })
             })
-            
         }
     })
 })
